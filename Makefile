@@ -1,4 +1,4 @@
-CMAPINC = ../libcmap/
+CMAPINC = libcmap
 CMAPLIB = ${CMAPINC}
 
 INCS = -I${CMAPINC}
