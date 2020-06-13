@@ -8,11 +8,8 @@
 #include <immintrin.h>
 #include "cmap.h"
 
-#define WIDTH 1920
-#define HEIGHT 1080
-#define MAX(X, Y) (((X) < (Y)) ? (X) : (Y))
-
-#define HORIZ_COLOUR
+#define WIDTH 3000
+#define HEIGHT 1000
 
 struct header {
 	char magic[8];
@@ -33,11 +30,7 @@ enum direction {
 	Right,
 };
 
-#ifdef HORIZ_COLOUR
-void random_walker(struct canvas *, uint32_t, uint32_t, uint32_t, uint32_t, struct colourmap *);
-#else
 void random_walker(struct canvas *, uint32_t, uint32_t, uint32_t, uint32_t, Pixel);
-#endif
 struct canvas * make_canvas(uint32_t, uint32_t, Pixel);
 void write_canvas(char *, struct canvas *);
 void free_canvas(struct canvas *);
@@ -45,28 +38,20 @@ void free_canvas(struct canvas *);
 int main (void) {
 	srand(time(NULL));
 
-	struct colourmap * cm = read_map("../libcmap/colourmaps/flag.cmap");
+	struct colourmap * cm = read_map("../libcmap/colourmaps/inferno.cmap");
 
-	Pixel white = {
-	  .red = UINT16_MAX,
-	  .blue = UINT16_MAX,
-	  .green = UINT16_MAX,
-	  .alpha = UINT16_MAX,
-	};
-	Pixel black = {
-	  .alpha = UINT16_MAX,
-	};
+	struct canvas * canvas = make_canvas(
+		WIDTH,
+		HEIGHT,
+		(Pixel) {
+			.alpha = UINT16_MAX
+		}
+	);
 
-	struct canvas * canvas = make_canvas(WIDTH, HEIGHT, black);
-
-	uint32_t borderpx = 150;
-	for (uint32_t y = borderpx + 1; y < HEIGHT - borderpx; y += 30) {
-#ifdef HORIZ_COLOUR
-		random_walker(canvas, borderpx + 1, y, 10000, borderpx, cm);
-#else
+	uint32_t borderpx = 20;
+	for (uint32_t y = borderpx + 1; y < HEIGHT - borderpx; y += 5) {
 		Pixel colour = cm->colours[((y - borderpx - 1) * cm->size) / (HEIGHT - 2 * borderpx - 2)];
 		random_walker(canvas, borderpx + 1, y, 10000, borderpx, colour);
-#endif
 
 	}
 
@@ -78,12 +63,7 @@ int main (void) {
 }
 
 void random_walker(struct canvas * canvas, uint32_t start_x, uint32_t start_y,
-#ifdef HORIZ_COLOUR
-	                 uint32_t num_steps, uint32_t borderpx, struct colourmap * cm
-#else
-	                 uint32_t num_steps, uint32_t borderpx, Pixel colour
-#endif
-) {
+	                 uint32_t num_steps, uint32_t borderpx, Pixel colour) {
 	assert(start_x > borderpx);
 	assert(start_x < WIDTH - borderpx);
 	assert(start_y > borderpx);
@@ -96,9 +76,6 @@ void random_walker(struct canvas * canvas, uint32_t start_x, uint32_t start_y,
 	uint32_t x = start_x;
 	uint32_t y = start_y;
 
-#ifdef HORIZ_COLOUR
-	Pixel colour = cm->colours[0];
-#endif
 	memcpy(&canvas->pixels[y][x], &colour, sizeof colour);
 
 	do {
@@ -134,9 +111,6 @@ void random_walker(struct canvas * canvas, uint32_t start_x, uint32_t start_y,
 				exit(EXIT_FAILURE);
 		}
 
-#ifdef HORIZ_COLOUR
-		colour = cm->colours[((x - borderpx - 1) * cm->size) / (WIDTH - 2 * borderpx - 2)];
-#endif
 		memcpy(&canvas->pixels[y][x], &colour, sizeof colour);
 
 		prev_direction = direction;
