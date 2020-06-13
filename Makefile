@@ -20,15 +20,15 @@ all: view
 3rw: 3/rw.c
 	gcc 3/rw.c ${INCS} ${CFLAGS} ${LIBS} -o rw
 
+4: 4rw view
+4rw: 4/rw.c
+	gcc 4/rw.c ${INCS} ${CFLAGS} ${LIBS} -o rw
+
 clean:
 	rm -f rw
 
-rw:
-	@printf "Hi, please choose which project to make:\n"
-	@printf "\tmake (1|2|3)\n"
-
 walk.ff: rw
-	[ -f ./rw ] && ./rw
+	./rw
 
 view: walk.ff
 	feh walk.ff
@@ -36,4 +36,4 @@ view: walk.ff
 png: walk.ff
 
 
-.PHONY: all clean view rw 1 2 3
+.PHONY: all clean view 1 2 3

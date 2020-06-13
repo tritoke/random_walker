@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <immintrin.h>
 #include "cmap.h"
 
 #define WIDTH 3000
@@ -40,12 +39,6 @@ int main (void) {
 
 	struct colourmap * cm = read_map("../libcmap/colourmaps/inferno.cmap");
 
-	Pixel white = {
-	  .red = UINT16_MAX,
-	  .blue = UINT16_MAX,
-	  .green = UINT16_MAX,
-	  .alpha = UINT16_MAX,
-	};
 	Pixel black = {
 	  .alpha = UINT16_MAX,
 	};
@@ -115,6 +108,7 @@ void random_walker(struct canvas * canvas, uint32_t start_x, uint32_t start_y,
 		}
 
 		colour = cm->colours[((x - borderpx - 1) * cm->size) / (WIDTH - 2 * borderpx - 2)];
+		memcpy(&canvas->pixels[y][x], &colour, sizeof colour);
 
 		prev_direction = direction;
 		steps_taken++;

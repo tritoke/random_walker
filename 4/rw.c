@@ -36,7 +36,6 @@ void free_canvas(struct canvas *);
 
 int main (void) {
 	srand(time(NULL));
-
 	struct colourmap * cm = read_map("../libcmap/colourmaps/plasma.cmap");
 
 	Pixel white = {
@@ -52,7 +51,7 @@ int main (void) {
 	struct canvas * canvas = make_canvas(WIDTH, HEIGHT, black);
 
 	uint32_t borderpx = 20;
-	for (uint32_t i = 0; i < 100000; i++) {
+	for (uint32_t i = 0; i < 2; i++) {
 		random_walker(
 			canvas,
 			WIDTH / 2,
@@ -100,7 +99,7 @@ void random_walker(struct canvas * canvas, uint32_t start_x, uint32_t start_y, u
 		 || (direction == Down  && y > canvas->height - steps_per_thingamy - borderpx)
 		 || (direction == Left  && x < borderpx)
 		 || (direction == Right && x > canvas->width - steps_per_thingamy - borderpx)
-		) break;
+		) continue;
 
 		for (uint32_t i = 0; i < steps_per_thingamy; i++) {
 			switch (direction) {

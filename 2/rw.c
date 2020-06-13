@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <immintrin.h>
 #include "cmap.h"
 
 #define WIDTH 3000
